@@ -13,6 +13,11 @@ $config = [
                     'controllerNamespace' => 'app\modules\user\controllers\backend',
                     'viewPath' => '@app/modules/user/views/backend',
                 ],
+                'shop' => [
+                    'class' => 'app\modules\shop\Module',
+                    'controllerNamespace' => 'app\modules\shop\controllers\backend',
+                    'viewPath' => '@app/modules/shop/views/backend',
+                ],
             ]
         ],
         'main' => [
@@ -22,6 +27,11 @@ $config = [
             'class' => 'app\modules\user\Module',
             'controllerNamespace' => 'app\modules\user\controllers\frontend',
             'viewPath' => '@app/modules/user/views/frontend',
+        ],
+        'shop' => [
+            'class' => 'app\modules\shop\Module',
+            'controllerNamespace' => 'app\modules\shop\controllers\frontend',
+            'viewPath' => '@app/modules/shop/views/frontend',
         ],
     ],
     'components' => [

@@ -36,6 +36,14 @@ echo Nav::widget([
     'activateParents' => true,
     'items' => array_filter([
         ['label' => Yii::t('app', 'NAV_ADMIN'), 'url' => ['/admin/default/index']],
+        ['label' => 'Магазин', 'items' => [
+            ['label' => 'Продукты', 'url' => ['/admin/shop/product/index']],
+            ['label' => 'Категории', 'url' => ['/admin/shop/category/index']],
+            ['label' => 'Аттрибуты', 'url' => ['/admin/shop/attribute/index']],
+            ['label' => 'Значения', 'url' => ['/admin/shop/value/index']],
+            ['label' => 'Метки', 'url' => ['/admin/shop/tag/index']],
+            ['label' => 'Метки продуктов', 'url' => ['/admin/shop/product-tag/index']],
+        ]],
         ['label' => Yii::t('app', 'NAV_ADMIN_USERS'), 'url' => ['/admin/user/default/index'], 'active' => $context->module->id == 'users'],
         ['label' => Yii::t('app', 'NAV_LOGOUT'), 'url' => ['/user/default/logout'], 'linkOptions' => ['data-method' => 'post']]
     ]),
