@@ -1,6 +1,9 @@
 <?php
 
 use app\modules\shop\models\backend\Category;
+use app\modules\shop\models\backend\Product;
+use app\modules\shop\models\backend\Tag;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -33,6 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'content:ntext',
             'price',
+            [
+                'label' => 'Метки',
+                'attribute' => 'tag_id',
+                'filter' => Tag::find()->select(['name', 'id'])->indexBy('id')->column(),
+                'value' => function(Product $product) {
+                    return implode(', ', ArrayHelper::map($product->tags, 'id', 'name'));
+                }
+            ],
             [
                 'attribute' => 'active',
                 'filter' => [0 => 'Нет', 1 => 'Да'],

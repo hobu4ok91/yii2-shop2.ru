@@ -6,19 +6,22 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use app\modules\shop\models\backend\Category;
+use yii\db\Expression;
 
 /**
  * CategorySearch represents the model behind the search form about `app\modules\shop\models\backend\Category`.
  */
 class CategorySearch extends Category
 {
+    public $products_count;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'parent_id'], 'integer'],
+            [['id', 'parent_id', 'products_count'], 'integer'],
             [['name'], 'safe'],
         ];
     }
@@ -41,12 +44,23 @@ class CategorySearch extends Category
      */
     public function search($params)
     {
-        $query = Category::find();
+        $query = Category::find()->select(['category.*', 'products_count' => new Expression('COUNT(product.id)')])
+            ->joinWith(['products'], false)
+            ->groupBy('category.id')
+            ->with(['parent']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'attributes' => [
+                    'id',
+                    'name',
+                    'parent_id',
+                    'products_count'
+                ]
+            ],
         ]);
 
         $this->load($params);
@@ -62,8 +76,12 @@ class CategorySearch extends Category
             'id' => $this->id,
             'parent_id' => $this->parent_id,
         ]);
+        $query->andFilterWhere(['like', 'category.name', $this->name]);
 
-        $query->andFilterWhere(['like', 'name', $this->name]);
+        if ($this->products_count === 0 || $this->products_count > 0) {
+            $query->andHaving(['products_count' => $this->products_count]);
+        }
+
 
         return $dataProvider;
     }

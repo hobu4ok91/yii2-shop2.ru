@@ -2,9 +2,13 @@
 
 namespace app\modules\shop\controllers\backend;
 
+use app\modules\shop\models\backend\Attribute;
+use app\modules\shop\models\backend\Value;
 use Yii;
 use app\modules\shop\models\backend\Product;
 use app\modules\shop\models\backend\search\ProductSearch;
+use yii\base\Exception;
+use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -68,12 +72,16 @@ class ProductController extends Controller
     public function actionCreate()
     {
         $model = new Product();
+        $values = $this->initValues($model);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->request->post();
+        if ($model->load($post) && $model->save() && Model::loadMultiple($values, $post)) {
+            $this->processValues($values, $model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
                 'model' => $model,
+                'values' => $values,
             ]);
         }
     }
@@ -87,12 +95,16 @@ class ProductController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $values = $this->initValues($model);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $post = Yii::$app->request->post();
+        if ($model->load($post) && $model->save() && Model::loadMultiple($values, $post)) {
+            $this->processValues($values, $model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'values' => $values,
             ]);
         }
     }
@@ -123,6 +135,44 @@ class ProductController extends Controller
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    /**
+     * @param Product $model
+     * @return Value[]
+     */
+    private function initValues(Product $model)
+    {
+        /** @var Value[] $values */
+        $values = $model->getValues()->with('productAttribute')->indexBy('attribute_id')->all();
+        $attributes = Attribute::find()->indexBy('id')->all();
+
+        foreach (array_diff_key($attributes, $values) as $attribute) {
+            $values[$attribute->id] = new Value(['attribute_id' => $attribute->id]);
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param Value[] $values
+     * @param Product $model
+     */
+    private function processValues($values, Product $model)
+    {
+        foreach ($values as $value) {
+            $value->product_id = $model->id;
+            if ($value->validate()) {
+                if (!empty($value->value)) {
+                    $value->save(false);
+                } else {
+                    $value->delete();
+                }
+            } else {
+                $value->delete();
+            }
+
         }
     }
 }

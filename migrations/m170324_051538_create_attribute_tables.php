@@ -14,7 +14,7 @@ class m170324_051538_create_attribute_tables extends Migration
         $this->createTable('value', [
             'product_id' => $this->integer()->notNull(),
             'attribute_id' => $this->integer()->notNull(),
-            'value' => $this->string()->notNull(),
+            'value' => $this->string(),
         ]);
         $this->addPrimaryKey('pk-value', 'value', ['product_id', 'attribute_id']);
         $this->createIndex('idx-value-product_id', 'value', 'product_id');

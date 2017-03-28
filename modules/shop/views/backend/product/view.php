@@ -18,16 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="h3">Основная информация</div>
 
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+
 
     <?= DetailView::widget([
         'model' => $model,
@@ -41,16 +32,28 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'name',
             'content:ntext',
+            [
+                'label' => 'Метки',
+                'value' => implode(', ', ArrayHelper::map($model->tags, 'id', 'name'))
+            ],
             'price',
             'active:boolean',
             'status',
         ],
     ]) ?>
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
 
     <div class="h3">Атрибуты товара</div>
-    <p>
-        <?= Html::a('Добавить характеристику', ['value/create', 'product_id' => $model->id], ['class' => 'btn btn-primary'])?>
-    </p>
+
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -69,5 +72,8 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]); ?>
+    <p>
+        <?= Html::a('Добавить характеристику', ['value/create', 'product_id' => $model->id], ['class' => 'btn btn-primary'])?>
+    </p>
 
 </div>

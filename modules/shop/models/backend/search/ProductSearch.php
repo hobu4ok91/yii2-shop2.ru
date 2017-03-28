@@ -12,13 +12,15 @@ use app\modules\shop\models\backend\Product;
  */
 class ProductSearch extends Product
 {
+    public $tag_id;
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            [['id', 'category_id', 'active', 'status'], 'integer'],
+            [['id', 'category_id', 'tag_id', 'active', 'status'], 'integer'],
             [['name', 'content'], 'safe'],
             [['price'], 'number'],
         ];
@@ -42,12 +44,26 @@ class ProductSearch extends Product
      */
     public function search($params)
     {
-        $query = Product::find()->with(['category']);
+        $query = Product::find()->joinWith(['category', 'productTags'])->with(['tags']);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+                'attributes' => [
+                    'id',
+                    'name',
+                    'price',
+                    'active',
+                    'status',
+                    'category_id' => [
+                        'asc' => ['category.name' => SORT_ASC],
+                        'desc' => ['category.name' => SORT_DESC],
+                    ],
+                ],
+            ]
         ]);
 
         $this->load($params);
@@ -65,6 +81,7 @@ class ProductSearch extends Product
             'price' => $this->price,
             'active' => $this->active,
             'status' => $this->status,
+            'product_tag.tag_id' => $this->tag_id,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])

@@ -23,15 +23,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            'name',
             [
                 'attribute' => 'parent_id',
                 'filter' => Category::find()->select(['name', 'id'])->indexBy('id')->column(),
                 'value' => 'parent.name'
             ],
-            'name',
+            [
+                'label' => 'Продукты',
+                'attribute' => 'products_count'
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],
