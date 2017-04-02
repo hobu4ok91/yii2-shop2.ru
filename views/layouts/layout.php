@@ -1,5 +1,6 @@
 <?php
 
+use app\assets\FrontendAsset;
 use yii\helpers\Html;
 use app\assets\AppAsset;
 

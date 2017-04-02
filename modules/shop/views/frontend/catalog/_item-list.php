@@ -8,7 +8,7 @@ use yii\bootstrap\Html;
 
 $tagLinks = [];
 foreach ($model->tags as $tag) {
-    $tagLinks[] = Html::a(Html::encode($tag->name), ['tag', 'tag' => $tag->name]);
+    $tagLinks[] = Html::a(Html::encode($tag->name), ['tag', 'tag_name' => $tag->name]);
 }
 
 ?>

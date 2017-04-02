@@ -8,11 +8,12 @@ use yii\widgets\Breadcrumbs;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
-
 ?>
 <?php $this->beginContent('@app/views/layouts/layout.php'); ?>
 
+
 <?php
+
 NavBar::begin([
     'brandLabel' => Yii::$app->name,
     'brandUrl' => Yii::$app->homeUrl,
